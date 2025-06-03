@@ -12,6 +12,14 @@ import { generateMockPessoas, Pessoa } from '@/data/mockData';
 import { Plus, Search, Filter, User, Phone, Mail, Calendar, Edit } from 'lucide-react';
 import { toast } from 'sonner';
 
+// Função para garantir que as datas sejam objetos Date
+const ensureDateObject = (date: Date | string): Date => {
+  if (typeof date === 'string') {
+    return new Date(date);
+  }
+  return date;
+};
+
 export default function Prospeccao() {
   const [pessoas, setPessoas] = useLocalStorage<Pessoa[]>('pessoas', generateMockPessoas(50));
   const [searchTerm, setSearchTerm] = useState('');
@@ -270,7 +278,7 @@ export default function Prospeccao() {
                           )}
                           <div className="flex items-center gap-1">
                             <Calendar className="h-4 w-4" />
-                            {person.primeiroContato.toLocaleDateString()}
+                            {ensureDateObject(person.primeiroContato).toLocaleDateString()}
                           </div>
                         </div>
                         
