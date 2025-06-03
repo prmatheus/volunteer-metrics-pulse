@@ -10,6 +10,15 @@ import { generateMockPessoas, generateMockAcompanhamentos, Pessoa, Acompanhament
 import { VolunteerModal } from '@/components/VolunteerModal';
 import { SettingsModal } from '@/components/SettingsModal';
 
+// Função para garantir que as datas sejam objetos Date
+const ensureDateObject = (date: Date | string | undefined): Date | undefined => {
+  if (!date) return undefined;
+  if (typeof date === 'string') {
+    return new Date(date);
+  }
+  return date;
+};
+
 interface Metrics {
   visitantes_mes: number;
   taxa_batismo: number;
@@ -40,7 +49,10 @@ export default function Dashboard() {
     const inicioMes = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
     
     // Visitantes este mês
-    const visitantesMes = pessoas.filter(p => p.primeiroContato >= inicioMes).length;
+    const visitantesMes = pessoas.filter(p => {
+      const primeiroContato = ensureDateObject(p.primeiroContato);
+      return primeiroContato && primeiroContato >= inicioMes;
+    }).length;
     
     // Taxa de batismo
     const batizados = pessoas.filter(p => p.dataBatismo).length;
@@ -58,8 +70,13 @@ export default function Dashboard() {
     const pessoasComInclusao = pessoas.filter(p => p.dataInclusao);
     const tempoMedioProspeccaoInclusao = pessoasComInclusao.length > 0 
       ? pessoasComInclusao.reduce((acc, p) => {
-          const dias = Math.abs((p.dataInclusao!.getTime() - p.primeiroContato.getTime()) / (1000 * 60 * 60 * 24));
-          return acc + dias;
+          const primeiroContato = ensureDateObject(p.primeiroContato);
+          const dataInclusao = ensureDateObject(p.dataInclusao);
+          if (primeiroContato && dataInclusao) {
+            const dias = Math.abs((dataInclusao.getTime() - primeiroContato.getTime()) / (1000 * 60 * 60 * 24));
+            return acc + dias;
+          }
+          return acc;
         }, 0) / pessoasComInclusao.length
       : 0;
     
@@ -67,8 +84,13 @@ export default function Dashboard() {
     const pessoasComLideranca = pessoas.filter(p => p.dataLideranca && p.dataInclusao);
     const tempoMedioInclusaoLideranca = pessoasComLideranca.length > 0
       ? pessoasComLideranca.reduce((acc, p) => {
-          const dias = Math.abs((p.dataLideranca!.getTime() - p.dataInclusao!.getTime()) / (1000 * 60 * 60 * 24));
-          return acc + dias;
+          const dataInclusao = ensureDateObject(p.dataInclusao);
+          const dataLideranca = ensureDateObject(p.dataLideranca);
+          if (dataInclusao && dataLideranca) {
+            const dias = Math.abs((dataLideranca.getTime() - dataInclusao.getTime()) / (1000 * 60 * 60 * 24));
+            return acc + dias;
+          }
+          return acc;
         }, 0) / pessoasComLideranca.length
       : 0;
 
