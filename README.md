@@ -71,3 +71,19 @@ Yes, you can!
 To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
 Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+
+## Migrating to Laravel with Blade
+
+If you want to recreate this project using Laravel for the backend and Blade for
+the frontend, an expanded example is provided in the `laravel-skeleton` directory.
+The skeleton now includes controllers and multiple Blade views demonstrating how the React pages can be translated to Blade.
+
+You will need PHP and Composer installed:
+
+```bash
+composer create-project laravel/laravel volunteer-metrics-pulse-laravel
+```
+
+After creating the project, copy the contents of `laravel-skeleton` into the corresponding folders of your Laravel application (`routes`, `resources`, and `app/Http/Controllers`).
+Run `php artisan serve` to view the pages. Expand the controllers and Blade templates to fully replicate the React functionality.
+
