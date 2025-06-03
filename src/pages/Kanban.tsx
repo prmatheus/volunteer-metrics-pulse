@@ -10,6 +10,14 @@ import { generateMockPessoas, Pessoa } from '@/data/mockData';
 import { Plus, User, Phone, Mail, Calendar } from 'lucide-react';
 import { toast } from 'sonner';
 
+// Função para garantir que as datas sejam objetos Date
+const ensureDateObject = (date: Date | string): Date => {
+  if (typeof date === 'string') {
+    return new Date(date);
+  }
+  return date;
+};
+
 export default function Kanban() {
   const [pessoas, setPessoas] = useLocalStorage<Pessoa[]>('pessoas', generateMockPessoas(50));
   const [selectedPerson, setSelectedPerson] = useState<Pessoa | null>(null);
@@ -119,7 +127,7 @@ export default function Kanban() {
                         
                         <div className="flex items-center gap-2 text-xs text-muted-foreground">
                           <Calendar className="h-3 w-3" />
-                          <span>{pessoa.primeiroContato.toLocaleDateString()}</span>
+                          <span>{ensureDateObject(pessoa.primeiroContato).toLocaleDateString()}</span>
                         </div>
                         
                         {pessoa.responsavel && (
@@ -183,7 +191,7 @@ export default function Kanban() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="text-sm font-medium">Primeiro Contato</label>
-                  <Input value={selectedPerson.primeiroContato.toLocaleDateString()} readOnly />
+                  <Input value={ensureDateObject(selectedPerson.primeiroContato).toLocaleDateString()} readOnly />
                 </div>
                 <div>
                   <label className="text-sm font-medium">Responsável</label>
